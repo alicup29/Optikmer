@@ -14,6 +14,7 @@ def plotKmerCounts(k):
   plt.hist(kmer_counts.values(), bins=range(1, 200))
   plt.xlabel('K-mer abundance')
   plt.ylabel('Number of k-mers')
+  plt.ylim(0, 200000)
   plt.title(f'k={k}')
   plt.savefig(f'histograms/k{k}.png')
   plt.close()
