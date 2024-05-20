@@ -1,54 +1,69 @@
 from collections import Counter
+from Bio import SeqIO
 import random
 import matplotlib.pyplot as plt
+import argparse
 
+# Initialize possible k-mer lengths & empty dictionary for k-mer counts
 kmer_lengths = [11, 21, 31, 41, 51, 61, 71, 81, 91]
- 
-# return a range instead of a specific kmer length
+test_kmer_lengths = [18]
+kmer_counts = Counter()
 
-def estimateOptKmerLen(reads, kmer_lengths, sample_size=4): # also used by kmergenie
-  """
-  Estimates the optimal k-mer length for de novo assembly using sampling.
+# plot the distribution of kmer counts for specific kmer length
+def plotKmerCounts(k):
+  plt.hist(kmer_counts.values(), bins=range(1, 200))
+  plt.xlabel('K-mer abundance')
+  plt.ylabel('Number of k-mers')
+  plt.title(f'k={k}')
+  plt.savefig(f'histograms/k{k}.png')
+  plt.close()
 
-  Args:
-      reads: A list of DNA sequencing reads (strings).
-      k_min: Minimum k-mer length to consider (default: 15).
-      k_max: Maximum k-mer length to consider (default: 35).
-      sample_size: Number of reads to sample for k-mer counting (default: 10000).
+def getSampleReads(fastq_file):
+  reads = []
+  for record in SeqIO.parse(fastq_file, "fastq"):
+    reads.append(str(record.seq))
+  return reads
+  # return random.sample(reads, 10000) # sample 10000
 
-  Returns:
-      The estimated optimal k-mer length and its corresponding k-mer count distribution.
-  """
-
+def recordKmers(reads, kmer_len): # also used by kmergenie
   # Sample reads for k-mer counting
-  sampled_reads = random.sample(reads, sample_size)
+  for read in reads: # 10000 sampled reads of varying lengths 
+    for i in range(len(read) - kmer_len + 1): # count each unique kmer in each read
+      kmer_counts[read[i:i+kmer_len]] += 1
+  plotKmerCounts(kmer_len)
 
-  # Initialize empty dictionary for k-mer counts
-  kmer_counts = Counter()
+def main():
+  # Parse command-line arguments (fastq files)
+  parser = argparse.ArgumentParser(description='Estimate the optimal k-mer length for de novo assembly using sampling.')
+  parser.add_argument('reads', type=str, help='A list of DNA sequencing reads (strings) in fastq format.')
+  args = parser.parse_args()
+  
+  # Obtain fastq files
+  rfiles = args.reads
 
-  # Explore k-mer lengths within the specified range
-  for k in kmer_lengths:
-    for read in sampled_reads:
-      for i in range(len(read) - k + 1):
-        kmer = read[i:i+k]
-        kmer_counts[kmer] += 1
+  # Extract reads from each fastq file with getReads function (defined above)
+  # and record it in kmer_counts dictionary
+  file_reads = getSampleReads(rfiles)
+  for k in test_kmer_lengths:
+    recordKmers(file_reads, k)
+    kmer_counts.clear()
+  
+  # Plot the distribution of kmer counts for each kmer length
+    
+if __name__ == '__main__':
+  main()
 
-  # Visualize kmer abundance histogram
-  plt.hist(kmer_counts.values(), bins=100, color='blue', alpha=0.7)
-  plt.show()
-
-  return kmer_counts
 
 # Example usage
-reads = ["GGATCTTCCAGCAGACGCTCGGCAAAGTCCTGAATCGCATCGCCTTCCAGCGTTGCCGAAAAGAGCAGGGTCTGTTTACGCCAGCGCGTTTCGCCAGCAA",
-         "TTATGAGAGGTTGGTCATATTATCGCGGGGAAACGAACCGAGGATTTGACAAAGCAATGCTGCGCCAACGTCTGGCACATGTTCAACGTAGGCCCGAAAT",
-         "GATCGCTAACCTGTTGCTGGCTCCGTACTTCAAGCAAATTGCCGATGACTACCAGCAGGCGCTGCGTGATGTCGTTGGTTATGCAGTA",
-         "AGGCTTTTGCTTATTAACTTTTATATAATATGTTGTTAATACCCCCAACA",
-         "CCAGCAGGCTGGCATTTCCTCCTTACCCTTTTAACTCCTTGTTATTGTGC",
-         "GTATTTCTATGTTATGTTTATAAATATTTTCTGGTGGTTTTGGATTATTA",
-          "TCTGCTTCCTCCATTTGTATTAGAAACATGATGGTAGACTTTGCTTTGTT",
-          "AGCTAATGTAACCCTGGTGCCTAGAATAATCCTTTGCACATAGTAGCATC",]
-optimal_k, kmer_counts = estimateOptKmerLen(reads)
+# reads = ["GGATCTTCCAGCAGACGCTCGGCAAAGTCCTGAATCGCATCGCCTTCCAGCGTTGCCGAAAAGAGCAGGGTCTGTTTACGCCAGCGCGTTTCGCCAGCAA",
+#          "TTATGAGAGGTTGGTCATATTATCGCGGGGAAACGAACCGAGGATTTGACAAAGCAATGCTGCGCCAACGTCTGGCACATGTTCAACGTAGGCCCGAAAT",
+#          "GATCGCTAACCTGTTGCTGGCTCCGTACTTCAAGCAAATTGCCGATGACTACCAGCAGGCGCTGCGTGATGTCGTTGGTTATGCAGTA",
+#          "AGGCTTTTGCTTATTAACTTTTATATAATATGTTGTTAATACCCCCAACA",
+#          "CCAGCAGGCTGGCATTTCCTCCTTACCCTTTTAACTCCTTGTTATTGTGC",
+#          "GTATTTCTATGTTATGTTTATAAATATTTTCTGGTGGTTTTGGATTATTA",
+#           "TCTGCTTCCTCCATTTGTATTAGAAACATGATGGTAGACTTTGCTTTGTT",
+#           "AGCTAATGTAACCCTGGTGCCTAGAATAATCCTTTGCACATAGTAGCATC",]
+# optimal_k, kmer_counts = estimateOptKmerLen(reads)
 
-print(f"Estimated optimal k-mer length: {optimal_k}")
+# print(f"Estimated optimal k-mer length: {optimal_k}")
 # You can analyze the kmer_counts dictionary further
