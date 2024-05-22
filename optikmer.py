@@ -10,11 +10,15 @@ import numpy as np
 # Initialize possible k-mer lengths & empty dictionary for k-mer counts
 kmer_lengths = [11, 21, 31, 41, 51, 61, 71, 81, 91]
 test_kmer_lengths = [18]
-test_kmer_lengths_2 = [19]
+test_kmer_lengths_2 = [91]
 kmer_counts = Counter()
+
+best_kmer = 0
+best_unique_kmers = 0
 
 # plot the distribution of kmer counts for specific kmer length
 def plotKmerCounts(k):
+  global best_kmer, best_unique_kmers
   counts, bins, _ = plt.hist(kmer_counts.values(), bins=range(1, 200))
   plt.xlabel('K-mer abundance')
   plt.ylabel('Number of k-mers')
@@ -27,7 +31,7 @@ def plotKmerCounts(k):
   
   # Find indices of local minima within the specified range
   local_minima = argrelextrema(counts[bin_indices], np.less)
-  
+
   # Print local minima
   start_point = 1
   for local_min in local_minima[0]:
@@ -38,10 +42,12 @@ def plotKmerCounts(k):
   unique_kmers = 0
   for i in range(start_point, 198):
     unique_kmers += counts[i]
-    
+  if unique_kmers > best_unique_kmers:
+    best_unique_kmers = unique_kmers
+    best_kmer = k
+
   plt.close()
   print (f'k={k}, unique_kmers={unique_kmers}')\
-
 
 def getSampleReads(fastq_file):
   reads = [] # while instead of loadin all into memory to save time 
@@ -49,7 +55,7 @@ def getSampleReads(fastq_file):
   for record in SeqIO.parse(fastq_file, "fastq"):
     reads.append(str(record.seq))
     record_count += 1
-  return random.sample(reads, math.ceil(record_count * 0.15)) # sample 10% of reads take in as command line arg
+  return random.sample(reads, math.ceil(record_count * 0.5)) # sample 10% of reads take in as command line arg
   # return random.sample(reads, 10000) # sample 10000
 
 def recordKmers(reads, kmer_len): # also used by kmergenie
@@ -62,7 +68,8 @@ def recordKmers(reads, kmer_len): # also used by kmergenie
 def main():
   # Parse command-line arguments (fastq files)
   parser = argparse.ArgumentParser(description='Estimate the optimal k-mer length for de novo assembly using sampling.')
-  parser.add_argument('reads', type=str, help='A list of DNA sequencing reads (strings) in fastq format.')
+  parser.add_argument('reads', metavar='N', type=str, nargs='+',
+                       help='A list of DNA sequencing reads (strings) in fastq format.')
   args = parser.parse_args()
   
   # Obtain fastq files
@@ -70,15 +77,17 @@ def main():
 
   # Extract reads from each fastq file with getReads function (defined above)
   # and record it in kmer_counts dictionary
-  file_reads = getSampleReads(rfiles)
-  for k in kmer_lengths:
-    recordKmers(file_reads, k)
-    kmer_counts.clear()
+  for k in kmer_lengths: # 9 kmer lengths
+    for rfile in rfiles: # big files
+      file_reads = getSampleReads(rfile)
+      recordKmers(file_reads, k)
+      kmer_counts.clear()
   
   # Plot the distribution of kmer counts for each kmer length
     
 if __name__ == '__main__':
   main()
+  print(f'Best kmer length: {best_kmer}, {best_unique_kmers} unique kmers')
 
 
 # Example usage
