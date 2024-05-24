@@ -1,19 +1,29 @@
 # Optikmer
-Project for CSE 185
+Optikmer is a demonstration project for CSE 185 for estimating the k-mer length associated with the highest amount of distinct k-mers given one or more (filtered) fastq files. It is inspired by k-mer counting programs such as kmerGenie and jellyfish in terms of using a sampling approach to approximate the best k-mer length for de-novo assembly. See <a href='http://kmergenie.bx.psu.edu/' target='blank'>kmerGenie<a> or <a href='https://github.com/gmarcais/Jellyfish' target='blank'>jellyfish<a> for more references.
 
-Group Members:
-Steven Nguyen A16858016
-Amick Licup A17038320
-Annapurna Saladi A17417895
+# Installation Instructions
+Optikmer is a command-line tool that requires several prerequisite libraries to be installed:
+```pip install biopython```
+```pip install matplotlib```
+```pip install scipy```
 
-Description:
-Given a set of reads in the form of fastq files, Optikmer will compute the k-mer abundance histogram for many values of k. Then, it predicts the number of distinct k-mers in the dataset and returns the k-mer length that maximizes this number. Optikmer will be compared to kmerGenie and jellyfish. We will implement Optikmer using a Python script, including its libraries Collections, Matplotlib, and potentially more. 
+Once the required libraries are successfully installed, ```optikmer``` can be installed with the following command:
+```python optikmer.py install``` OR ```python3 optikmer.py install```
 
-Benchmarking:
-For benchmarking, we will compare our tool’s results to kmergenie as seen in lab 2 with the same datasets, as well as comparing their runtimes to estimate how it can be improved. Specifically against kmergenie and jellyfish to display the histograms.
+If successfully installed, please refer to ```optikmer --help``` for further help.
 
+# Basic Usage
+The basic usage of ```optikmer``` is:
+```optikmer [file1.fasta] [file2.fasta]...```
 
-Test Dataset:
-We plan to test our tool against the data in the C. elegans data set found on the NCBI (National Center for Biotechnology Information) SRA (short read archive) site.
-https://www.ncbi.nlm.nih.gov/sra/SRX24381198[accn]
+To run ```optikmer``` on a test example using existing repo files:
+```optikmer public/shortfrag_trimmed_1.fq```
 
+# optikmer options
+Optikmer requires at least one filtered/trimmed fastq file. There are no other required options.
+
+# Contributors
+Project assembled by:
+- Steven Nguyen (ID: A16858016)
+- Amick Licup (ID: A17038320)
+- Annapurna Saladi (ID: A17417895)
