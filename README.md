@@ -20,7 +20,7 @@ The basic usage of ```optikmer``` is: (To be added soon)
 
 To run ```optikmer``` on a test example using existing repo files:
 ```optikmer public/shortfrag_trimmed_1.fq```
-(For now use: python (or python3) optikmer.py public/shortfrag_trimmed_1.fq for a test
+(For now use: ```python (or python3) optikmer.py public/shortfrag_trimmed_1.fq for a test```
 
 # optikmer options
 Optikmer requires at least one filtered/trimmed fastq file. There are no other required options.
