@@ -7,17 +7,20 @@ Optikmer is a command-line tool that requires several prerequisite libraries to 
 ```pip install matplotlib```
 ```pip install scipy```
 
-Once the required libraries are successfully installed, ```optikmer``` can be installed with the following command:
+Once the required libraries are successfully installed, ```optikmer``` can be installed with the following command: (To be added soon)
 ```python optikmer.py install``` OR ```python3 optikmer.py install```
 
-If successfully installed, please refer to ```optikmer --help``` for further help.
+If successfully installed, please refer to 
+```optikmer --help```
+for further help.
 
 # Basic Usage
-The basic usage of ```optikmer``` is:
+The basic usage of ```optikmer``` is: (To be added soon)
 ```optikmer [file1.fasta] [file2.fasta]...```
 
 To run ```optikmer``` on a test example using existing repo files:
 ```optikmer public/shortfrag_trimmed_1.fq```
+(For now use: python (or python3) optikmer.py public/shortfrag_trimmed_1.fq for a test
 
 # optikmer options
 Optikmer requires at least one filtered/trimmed fastq file. There are no other required options.
