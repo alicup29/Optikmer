@@ -2,13 +2,12 @@
 Optikmer is a demonstration project for CSE 185 for estimating the k-mer length associated with the highest amount of distinct k-mers given one or more (filtered) fastq files. It is inspired by k-mer counting programs such as kmerGenie and jellyfish in terms of using a sampling approach to approximate the best k-mer length for de-novo assembly. See <a href='http://kmergenie.bx.psu.edu/' target='blank'>kmerGenie<a> or <a href='https://github.com/gmarcais/Jellyfish' target='blank'>jellyfish<a> for more references.
 
 # Installation Instructions
-Optikmer is a command-line tool that requires several prerequisite libraries to be installed:
-```pip install biopython```
-```pip install matplotlib```
-```pip install scipy```
+Optikmer can be installed with the following command: 
+```pip install Optikmer/```
 
-Once the required libraries are successfully installed, ```optikmer``` can be installed with the following command: (To be added soon)
-```python optikmer.py install``` OR ```python3 optikmer.py install```
+For an editable version, you can use the command:
+```pip install --no-build-isolation -e Optikmer/```
+
 
 If successfully installed, please refer to 
 ```optikmer --help```
