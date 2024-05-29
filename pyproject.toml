@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+
+[project]
+name = "optikmer"
+version = "0.0.0"
+description = "identification of poisonous particles from RELION star files"
+authors = [
+    {name = "Annapurna Saladi", email = "asaladi@ucsd.edu"},
+    {name = "Steven Nguyen", email = "stn019@ucsd.edu"},
+    {name = "Amick Licup", email = "alicup@ucsd.edu"}
+]
+
+readme = "README.md"
+dependencies = [
+    "biopython",
+    "matplot",
+    "scipy"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
