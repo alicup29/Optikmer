@@ -1,3 +1,4 @@
+import os
 import time
 from Bio import SeqIO
 from collections import Counter
@@ -150,6 +151,8 @@ def main():
   with open(f'{output_dir}/optikmer_histogram_report.html', 'w') as f:
     f.write('\n'.join(html))
     print(f'Generated HTML report! ({output_dir}/histogram_report.html)')
+
+  os.remove(f'{output_dir}/output.jf')
 
   end_time = time.time()
   elapsed_time = end_time - start_time # time in minutes
