@@ -37,6 +37,19 @@ with the files from lab2 (shortfrag_trimmed_1.fq and/or shortfrag_trimmed_2.fq)
 ```
 - `-o OUTPUT`, `--output OUTPUT`: Write to output **DIRECTORY**, default written to current directory.
 
+# Example
+**1. Optikmer was installed and run with the following options:**
+- `-k`, `--kmer`: [19, 21]
+- `-o`, `--output` (directory): jellyfish
+![Optikmer Step 1 Example](public/optikmer_ex_1.png)
+
+**2. All resulting files and images stored in `./jellyfish` directory**
+![Optikmer Step 2 Example](public/optikmer_ex_2.png)
+
+**3. Histogram report displays k-mer length with most unique k-mers at the top**
+![Optikmer Step 3 Example](public/optikmer_ex_3.png)
+
+
 # Contributors
 Project assembled by:
 - Amick Licup (ID: A17038320)
