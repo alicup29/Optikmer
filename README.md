@@ -31,7 +31,10 @@ with the files from lab2 (shortfrag_trimmed_1.fq and/or shortfrag_trimmed_2.fq)
 
 # Optikmer options
 **Optikmer** requires at least one filtered/trimmed fastq file. Optional User specifications are below.
-- `-k KMERS [KMERS ...]`, `--kmers KMERS [KMERS ...]`: User specifed k-mers to estimate, default is `[11, 21, 31, 41, 51, 61, 71, 81, 91]`
+- `-k KMERS [KMERS ...]`, `--kmers KMERS [KMERS ...]`: User specifed k-mers to estimate, default is 
+```
+[11, 21, 31, 41, 51, 61, 71, 81, 91]
+```
 - `-o OUTPUT`, `--output OUTPUT`: Write to output **DIRECTORY**, default written to current directory.
 
 # Contributors
