@@ -1,32 +1,22 @@
 import os
 import time
-from Bio import SeqIO
 from collections import Counter
-from scipy.signal import argrelextrema
 import argparse
 import matplotlib.pyplot as plt
-import math
-import numpy as np
-import random
 import subprocess
 
 def estimateValley(kmer_counts):
-    valley = 0
-    prev_max = -1
-    
-    for i in range(1, len(kmer_counts)):
-        if prev_max < 0:
-            prev_max = kmer_counts[i]
-        elif kmer_counts[i] > prev_max:
-            valley = i
-            return valley
-        else:
-            prev_max = kmer_counts[i]
+  prev_max = kmer_counts[1]
+  
+  for i in range(2, len(kmer_counts)):
+    if kmer_counts[i] > prev_max:
+      return i - 1
+    prev_max = kmer_counts[i]
 
-    return valley
+  return len(kmer_counts)
 
 def getKmerHistogram(histofile, kmer_len, output_dir):
-    kmer_counts = {} # Dictionary of count -> number of kmers
+    kmer_counts = Counter() # Dictionary of count -> number of kmers
 
     contents = open(histofile).readlines()
     max_xval = 200
@@ -57,10 +47,10 @@ def getKmerHistogram(histofile, kmer_len, output_dir):
     return kmer_counts
 
 def jellyfishCount(k, rfile, output_dir):
-  jellyfish_cmd = f"jellyfish count -m {k} -C -s 100M -o {output_dir}/output.jf {rfile}"
-  subprocess.run(jellyfish_cmd.split(), check=True)
   output_file = f"{output_dir}/output.jf"
   histo_file = f"{output_dir}/output.jf.histo"
+  jellyfish_cmd = f"jellyfish count -m {k} -C -s 100M -o {output_dir}/output.jf {rfile}"
+  subprocess.run(jellyfish_cmd.split(), check=True)
   jellyfish_cmd = ["jellyfish", "histo", output_file]
   with open(histo_file, "w") as f:
     subprocess.run(jellyfish_cmd, stdout=f, check=True)
@@ -104,6 +94,17 @@ def main():
   best_kmer = 0
   unique_kmer_dict = {}
 
+  # Combine all FASTQ files into one
+  rfile = "combined.fastq"
+  with open(rfile, 'w') as outfile:
+    subprocess.call(['cat'] + rfiles, stdout=outfile)
+
+  for file in rfiles:
+    print(file)
+    if file.endswith('.gz'):
+      print('Detected gzipped file test...')
+      rfile = file
+
   # Process each kmer length (9 total) for each file read
   for k in kmer_lengths:
     print(f'Processing k={k}', end='')
@@ -111,25 +112,24 @@ def main():
       print('.', end='', flush=True)
       time.sleep(0.5)
 
-    for rfile in rfiles: 
+    # Count the kmers using jellyfish and generate a histogram
+    unique_kmers = 0
+    histo_file = jellyfishCount(k, rfile, output_dir)
+    kmer_counts = getKmerHistogram(histo_file, k, output_dir)
+    valley = estimateValley(kmer_counts)
+    
 
-      # Count the kmers using jellyfish and generate a histogram
-      unique_kmers = 0
-      histo_file = jellyfishCount(k, rfile, output_dir)
-      kmer_counts = getKmerHistogram(histo_file, k, output_dir)
-      valley = estimateValley(kmer_counts)
+    for key in kmer_counts.keys():
+      if key >= valley:
+        unique_kmers += kmer_counts[key]
+    print(f'k={k}, unique_kmers={unique_kmers}')
+    unique_kmer_dict[k] = unique_kmers
+    if unique_kmers > best_unique_kmers:
+      best_unique_kmers = unique_kmers
+      best_kmer = k
 
-      for key in kmer_counts.keys():
-        if key >= valley:
-          unique_kmers += kmer_counts[key]
-      print(f'k={k}, unique_kmers={unique_kmers}')
-      unique_kmer_dict[k] = unique_kmers
-      if unique_kmers > best_unique_kmers:
-        best_unique_kmers = unique_kmers
-        best_kmer = k
-
-      # Clear the kmer counts for next kmer
-      kmer_counts.clear()
+    # Clear the kmer counts for next kmer
+    kmer_counts.clear()
 
   print(f'Best k={best_kmer}, unique_kmers={best_unique_kmers}')
 
@@ -152,15 +152,13 @@ def main():
     f.write('\n'.join(html))
     print(f'Generated HTML report! ({output_dir}/histogram_report.html)')
 
-  os.remove(f'{output_dir}/output.jf')
-
   end_time = time.time()
   elapsed_time = end_time - start_time # time in minutes
   minutes = round(elapsed_time / 60, 2)
   if minutes < 60:
     print(f'Finished analysis in: {minutes} minute(s)')
   else:
-    print(f'Finished analysis in: {round(elapsed_time / 60, 2)} hour(s)')
+    print(f'Finished analysis in: {round(minutes / 60, 2)} hour(s)')
   
 if __name__ == '__main__':
   main()
