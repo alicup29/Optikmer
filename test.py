@@ -26,10 +26,33 @@
 
 # print(f"Max unique kmers: {max_unique_kmers} when k = {max_k}")
 
-testseq = "GGATCTTCCAG"
-i = 5
-k = 12
-print(testseq[i:i+k])
+# testseq = "GGATCTTCCAG"
+# i = 5
+# k = 12
+# print(testseq[i:i+k])
 
-for i in range(len(testseq) - k + 1):
-  print("ran")
+# for i in range(len(testseq) - k + 1):
+#   print("ran")
+
+# print("~/Downloads/SRR28691205.fastq.gz".endswith('.gz'))
+
+import os
+import subprocess
+
+def jellyfishCount(k, rfile, output_dir):
+  rfile = os.path.expanduser(rfile)
+  output_file = f"{output_dir}/output.jf"
+  histo_file = f"{output_dir}/output.jf.histo"
+  
+  # Count k-mers with jellyfish
+  jellyfish_count_cmd = f"gunzip -c {rfile} | jellyfish count -m {k} -C -s 100M -o {output_file} /dev/fd/0"
+  subprocess.run(jellyfish_count_cmd, shell=True, check=True)
+  
+  # Generate histogram with jellyfish
+  jellyfish_histo_cmd = f"jellyfish histo -o {histo_file} {output_file}"
+  subprocess.run(jellyfish_histo_cmd, shell=True, check=True)
+  
+  return histo_file
+
+# Example usage:
+print(jellyfishCount(21, "~/Downloads/SRR28691205.fastq", "realdata"))
