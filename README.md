@@ -2,32 +2,26 @@
 **Optikmer** is a demonstration project for CSE 185 that estimates the k-mer length associated with the highest amount of distinct k-mers given one or more (filtered) fastq files. It is inspired by k-mer counting programs such as kmerGenie and jellyfish in terms of approximating the best k-mer length for de-novo assembly. See <a href='http://kmergenie.bx.psu.edu/' target='blank'>kmerGenie<a> or <a href='https://github.com/gmarcais/Jellyfish' target='blank'>jellyfish<a> for more references.
 
 # Installation Instructions
-**Optikmer** can be installed with the following command: 
+**Note:** Installing and activating a virtual environment is highly recommended.
+**1.** Once in your desired directory, optikmer can be installed with the following command: 
 ``` 
-pip install Optikmer/
+pip install git+https://github.com/alicup29/Optikmer.git
 ```
-
-For an editable version, you can use the command:
-```
-pip install --no-build-isolation -e Optikmer/
-```
-
 
 If successfully installed, please refer to `optikmer --help` for further help.
 
 # Basic Usage
-The basic usage of ```optikmer``` is: (To be added soon)
-```optikmer [-k KMERS [KMERS ...]] [-o OUTPUT] filtered_read_1.fq filtered_read_2.fq ...```
+The basic usage of ```optikmer``` is:
+```
+optikmer [-k KMERS [KMERS ...]] [-o OUTPUT] filtered_read_1.fastq filtered_read_2.fasta ...
+```
+**Note 1:** If inputing compressed files (ex. fastq.gz and/or downloaded from NCBI), please **uncompress with gunzip beforehand** and use resulting fastq/fasta file.
 
-To run ```optikmer``` on a test example using existing files:
+**Note 2:** If specifying k-mer length(s), **enter -k option FIRST, THEN -o to desired directory is required** (. if current directory).
+For example, the following command with analyze the fasta file ONLY with k=19, and output results to the current directory.
 ```
-optikmer public/shortfrag_trimmed_1.fq
+optikmer -k 19 -o . ~/Downloads/SRR28691205.fasta
 ```
-For now use: 
-```
-python (or python3) optikmerjellyfish.py shortfrag_trimmed_1.fq.
-```
-with the files from lab2 (shortfrag_trimmed_1.fq and/or shortfrag_trimmed_2.fq)
 
 # Optikmer options
 **Optikmer** requires at least one filtered/trimmed fastq file. Optional User specifications are below.
@@ -40,7 +34,7 @@ with the files from lab2 (shortfrag_trimmed_1.fq and/or shortfrag_trimmed_2.fq)
 # Example
 **1. Optikmer was installed and run with the following options:**
 - `-k`, `--kmer`: [19, 21]
-- `-o`, `--output` (directory): jellyfish
+- `-o`, `--output` (directory): results
 ![Optikmer Step 1 Example](public/optikmer_ex_1.png)
 
 **2. All resulting files and images stored in `./jellyfish` directory**
