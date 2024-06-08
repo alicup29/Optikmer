@@ -46,7 +46,7 @@ optikmer -k 19 -o . ~/Downloads/SRR28691205.fasta
 ![Optikmer Step 3 Example](public/slide3.png)
 ![Optikmer Step 4 Example](public/slide4.png)
 
-1c. Ran with following command
+1c. Ran with following command (dataset can be found in Optikmer/realdata/README.md)
 ![Optikmer Step 5 Example](public/slide5.png)
 
 
